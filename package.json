@@ -1,0 +1,10 @@
+{
+  "name": "resume-rag",
+  "type": "module",
+  "scripts": {
+    "generate-embeddings": "node scripts/generate-embeddings.mjs"
+  },
+  "devDependencies": {
+    "@huggingface/transformers": "^3.3.3"
+  }
+}
