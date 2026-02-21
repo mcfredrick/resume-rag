@@ -71,6 +71,20 @@
 
     .model-name { font-size: 0.8125rem; color: var(--muted); width: 130px; flex-shrink: 0; }
 
+    /* ── Mobile notice ── */
+    .mobile-notice {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.875rem 1rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.8125rem;
+      color: var(--muted);
+      line-height: 1.5;
+      display: none;
+    }
+    .mobile-notice a { color: var(--muted); text-decoration: underline; }
+
     /* ── Disclaimer ── */
     .disclaimer {
       font-size: 0.75rem;
@@ -248,6 +262,11 @@
         <span class="chip disabled" data-q="What is Matthew's educational background?">Education</span>
         <span class="chip disabled" data-q="Has Matthew done any mentorship or leadership work?">Leadership</span>
       </div>
+    </div>
+
+    <div class="mobile-notice" id="mobile-notice">
+      For the best experience, open this on a desktop browser — the AI model runs locally
+      and works better with more memory. Or just <a href="mailto:mcfredrick@pm.me">email me directly</a>.
     </div>
 
     <p class="disclaimer">

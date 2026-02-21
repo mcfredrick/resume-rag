@@ -22,7 +22,7 @@ function makeProgressCallback(model) {
 }
 
 async function loadModels() {
-  self.postMessage({ type: 'modelInfo', payload: { name: isMobile ? 'SmolLM2-135M' : 'SmolLM2-360M' } });
+  self.postMessage({ type: 'modelInfo', payload: { name: isMobile ? 'SmolLM2-135M' : 'SmolLM2-360M', isMobile } });
 
   embedder = await pipeline('feature-extraction', EMBED_MODEL, {
     progress_callback: makeProgressCallback('embed'),
@@ -75,7 +75,7 @@ async function generateAnswer(query, chunks) {
   });
 
   await generator(messages, {
-    max_new_tokens: 500,
+    max_new_tokens: isMobile ? 150 : 500,
     do_sample: false,
     streamer,
   });

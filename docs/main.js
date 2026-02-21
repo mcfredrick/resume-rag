@@ -14,6 +14,7 @@ const chips = document.querySelectorAll('.chip');
 
 let embeddings = null;
 let isGenerating = false;
+let topK = 8;
 
 async function loadEmbeddings() {
   const response = await fetch('./embeddings.json');
@@ -31,7 +32,7 @@ function cosineSimilarity(a, b) {
   return denom === 0 ? 0 : dot / denom;
 }
 
-function findTopChunks(queryEmbedding, k = 8) {
+function findTopChunks(queryEmbedding, k = topK) {
   return embeddings
     .map(({ text, embedding }) => ({ text, score: cosineSimilarity(queryEmbedding, embedding) }))
     .sort((a, b) => b.score - a.score)
@@ -89,6 +90,10 @@ worker.onmessage = async ({ data: { type, payload } }) => {
 
     case 'modelInfo':
       document.getElementById('llm-name').textContent = payload.name;
+      if (payload.isMobile) {
+        topK = 4;
+        document.getElementById('mobile-notice').style.display = 'block';
+      }
       break;
 
     case 'ready':
