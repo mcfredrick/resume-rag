@@ -87,6 +87,10 @@ worker.onmessage = async ({ data: { type, payload } }) => {
       setProgress(payload.model, payload.progress);
       break;
 
+    case 'modelInfo':
+      document.getElementById('llm-name').textContent = payload.name;
+      break;
+
     case 'ready':
       setProgress('embed', 100, true);
       setProgress('llm', 100, true);

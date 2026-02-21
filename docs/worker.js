@@ -3,7 +3,12 @@ import { pipeline, env, TextStreamer } from 'https://cdn.jsdelivr.net/npm/@huggi
 env.allowRemoteModels = true;
 
 const EMBED_MODEL = 'Xenova/all-MiniLM-L6-v2';
-const LLM_MODEL = 'HuggingFaceTB/SmolLM2-360M-Instruct';
+
+// 135M on mobile (~67MB) to avoid memory-pressure reloads; 360M on desktop.
+const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+const LLM_MODEL = isMobile
+  ? 'HuggingFaceTB/SmolLM2-135M-Instruct'
+  : 'HuggingFaceTB/SmolLM2-360M-Instruct';
 
 let embedder = null;
 let generator = null;
@@ -17,6 +22,8 @@ function makeProgressCallback(model) {
 }
 
 async function loadModels() {
+  self.postMessage({ type: 'modelInfo', payload: { name: isMobile ? 'SmolLM2-135M' : 'SmolLM2-360M' } });
+
   embedder = await pipeline('feature-extraction', EMBED_MODEL, {
     progress_callback: makeProgressCallback('embed'),
   });

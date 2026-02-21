@@ -71,6 +71,15 @@
 
     .model-name { font-size: 0.8125rem; color: var(--muted); width: 130px; flex-shrink: 0; }
 
+    /* ── Disclaimer ── */
+    .disclaimer {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+    .disclaimer a { color: var(--muted); text-decoration: underline; }
+
     .progress-bar {
       flex: 1;
       height: 4px;
@@ -223,7 +232,7 @@
         <span class="progress-pct" id="embed-pct">0%</span>
       </div>
       <div class="model-row">
-        <span class="model-name">SmolLM2-360M</span>
+        <span class="model-name" id="llm-name">SmolLM2-360M</span>
         <div class="progress-bar"><div class="progress-fill" id="llm-fill"></div></div>
         <span class="progress-pct" id="llm-pct">0%</span>
       </div>
@@ -240,6 +249,11 @@
         <span class="chip disabled" data-q="Has Matthew done any mentorship or leadership work?">Leadership</span>
       </div>
     </div>
+
+    <p class="disclaimer">
+      This runs a very small AI model locally in your browser and will make mistakes.
+      For accurate answers, <a href="mailto:mcfredrick@pm.me">email me directly</a>.
+    </p>
 
     <form class="qa-form" id="qa-form">
       <input
