@@ -58,7 +58,7 @@ async function generateAnswer(query, chunks) {
       role: 'system',
       content:
         "You are a helpful assistant answering questions about Matthew Fredrick's resume. " +
-        'Answer based only on the provided context. Be concise and accurate.',
+        'Answer based only on the provided context. Be accurate and complete — when asked about experience or accomplishments, mention all relevant details from the context.',
     },
     {
       role: 'user',
@@ -75,7 +75,7 @@ async function generateAnswer(query, chunks) {
   });
 
   await generator(messages, {
-    max_new_tokens: 300,
+    max_new_tokens: 500,
     do_sample: false,
     streamer,
   });

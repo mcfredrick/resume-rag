@@ -31,7 +31,7 @@ function cosineSimilarity(a, b) {
   return denom === 0 ? 0 : dot / denom;
 }
 
-function findTopChunks(queryEmbedding, k = 5) {
+function findTopChunks(queryEmbedding, k = 8) {
   return embeddings
     .map(({ text, embedding }) => ({ text, score: cosineSimilarity(queryEmbedding, embedding) }))
     .sort((a, b) => b.score - a.score)
