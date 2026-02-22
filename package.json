@@ -2,6 +2,7 @@
   "name": "resume-rag",
   "type": "module",
   "scripts": {
+    "dev": "npx live-server docs",
     "generate-embeddings": "node scripts/generate-embeddings.mjs"
   },
   "devDependencies": {

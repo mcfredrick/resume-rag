@@ -13,9 +13,19 @@ Client-side RAG agent for Matthew Fredrick's resume. Runs entirely in the browse
 
 **First load:** ~25MB (embeddings model) + ~200MB (SmolLM2 q4) — cached in browser after that.
 
+## Local development
+
+```bash
+npm run dev
+```
+
+Opens `http://localhost:8080` and auto-reloads on file save. No build step — edits to `docs/worker.js`, `docs/main.js`, or `docs/index.html` take effect on the next browser refresh (or automatically with live-server).
+
+> Note: on first load the browser still downloads ~225MB of model weights from HuggingFace. They're cached after that.
+
 ## Regenerating embeddings
 
-If `resume.md` changes, re-run:
+If `docs/context.md` changes, re-run:
 
 ```bash
 npm install

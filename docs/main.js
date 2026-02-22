@@ -44,9 +44,10 @@ function initApp() {
     return denom === 0 ? 0 : dot / denom;
   }
 
-  function findTopChunks(queryEmbedding, k = 8) {
+  function findTopChunks(queryEmbedding, k = 4, minScore = 0.3) {
     return embeddings
       .map(({ text, embedding }) => ({ text, score: cosineSimilarity(queryEmbedding, embedding) }))
+      .filter(({ score }) => score >= minScore)
       .sort((a, b) => b.score - a.score)
       .slice(0, k)
       .map(({ text }) => text);
