@@ -148,6 +148,34 @@
     .chip:hover:not(.disabled) { border-color: var(--accent); color: var(--text); }
     .chip.disabled { cursor: not-allowed; opacity: 0.45; }
 
+    /* ── Persona section ── */
+    .persona-section { margin-bottom: 1.25rem; }
+
+    .persona-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .persona-header .examples-label { margin-bottom: 0; white-space: nowrap; }
+
+    input.persona-input {
+      flex: none;
+      width: 200px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 0.3rem 0.875rem;
+      color: var(--text);
+      font-size: 0.8125rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    input.persona-input::placeholder { color: var(--muted); }
+    input.persona-input:focus { border-color: var(--accent); }
+
     /* ── Input form ── */
     .qa-form { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
 
@@ -180,6 +208,36 @@
     }
     button:hover:not(:disabled) { background: var(--accent-dim); }
     button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    /* ── Greeting & thinking dots ── */
+    .greeting-text {
+      font-size: 0.9375rem;
+      line-height: 1.65;
+      color: var(--muted);
+      font-style: italic;
+      white-space: pre-wrap;
+      margin-bottom: 0.75rem;
+    }
+
+    .thinking-dots {
+      display: none;
+      gap: 5px;
+      margin-bottom: 0.75rem;
+    }
+    .thinking-dots.visible { display: flex; }
+    .thinking-dots span {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--muted);
+      animation: dot-pulse 1.2s ease-in-out infinite;
+    }
+    .thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes dot-pulse {
+      0%, 80%, 100% { opacity: 0.2; transform: scale(0.75); }
+      40% { opacity: 1; transform: scale(1); }
+    }
 
     /* ── Answer card ── */
     .answer-card {
@@ -350,6 +408,21 @@
       </div>
     </div>
 
+    <div class="persona-section" id="persona-section">
+      <div class="persona-header">
+        <span class="examples-label">Respond as a…</span>
+        <input type="text" class="persona-input" id="persona-input"
+          placeholder="helpful assistant" maxlength="40" autocomplete="off">
+      </div>
+      <div class="chips" id="persona-chips">
+        <span class="chip" data-persona="pirate">pirate</span>
+        <span class="chip" data-persona="radio DJ">radio DJ</span>
+        <span class="chip" data-persona="sports announcer">sports announcer</span>
+        <span class="chip" data-persona="noir detective">noir detective</span>
+        <span class="chip" data-persona="surfer dude">surfer dude</span>
+      </div>
+    </div>
+
     <div class="mobile-notice" id="mobile-notice">
       This app runs AI inference directly on your device — no data leaves your machine.
       That approach requires the memory available on a desktop browser.
@@ -373,7 +446,9 @@
     </form>
 
     <div class="answer-card" id="answer-card">
-      <div class="answer-label">Answer</div>
+      <div class="answer-label" id="answer-label">Answer</div>
+      <div class="greeting-text" id="greeting-text"></div>
+      <div class="thinking-dots" id="thinking-dots"><span></span><span></span><span></span></div>
       <div class="answer-text" id="answer-text"></div>
     </div>
 

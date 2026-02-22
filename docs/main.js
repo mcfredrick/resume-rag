@@ -3,6 +3,7 @@ const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 if (isMobile) {
   document.getElementById('status-card').style.display = 'none';
   document.getElementById('examples').style.display = 'none';
+  document.getElementById('persona-section').style.display = 'none';
   document.getElementById('disclaimer').style.display = 'none';
   document.getElementById('qa-form').style.display = 'none';
   document.getElementById('mobile-notice').style.display = 'block';
@@ -23,10 +24,25 @@ function initApp() {
   const qaForm = document.getElementById('qa-form');
   const answerCard = document.getElementById('answer-card');
   const answerText = document.getElementById('answer-text');
-  const chips = document.querySelectorAll('.chip');
+  const greetingText = document.getElementById('greeting-text');
+  const thinkingDots = document.getElementById('thinking-dots');
+  const chips = document.querySelectorAll('#chips .chip');
+  const personaInput = document.getElementById('persona-input');
+
+  document.querySelectorAll('#persona-chips .chip').forEach((chip) => {
+    chip.addEventListener('click', () => {
+      personaInput.value = chip.dataset.persona;
+    });
+  });
+
+  function getPersona() {
+    const words = personaInput.value.trim().split(/\s+/).filter(Boolean);
+    return words.slice(0, 3).join(' ') || 'helpful assistant';
+  }
 
   let embeddings = null;
   let isGenerating = false;
+  let currentPersona = 'helpful assistant';
 
   async function loadEmbeddings() {
     const response = await fetch('./embeddings.json');
@@ -79,14 +95,19 @@ function initApp() {
 
   const robot = document.getElementById('robot');
 
-  function startAnswer() {
+  const answerLabel = document.getElementById('answer-label');
+
+  function startAnswer(persona) {
     isGenerating = true;
     submitBtn.disabled = true;
     submitBtn.textContent = 'Thinking…';
     questionInput.disabled = true;
     answerCard.classList.add('visible');
-    answerText.innerHTML = '<span class="cursor"></span>';
     robot.classList.add('thinking');
+    answerLabel.textContent = persona === 'helpful assistant' ? 'Answer' : `Answer · as ${persona}`;
+    greetingText.innerHTML = '';
+    thinkingDots.classList.remove('visible');
+    answerText.innerHTML = persona === 'helpful assistant' ? '<span class="cursor"></span>' : '';
   }
 
   function finishAnswer() {
@@ -94,8 +115,9 @@ function initApp() {
     submitBtn.disabled = false;
     submitBtn.textContent = 'Ask';
     questionInput.disabled = false;
-    const cursor = answerText.querySelector('.cursor');
-    if (cursor) cursor.remove();
+    answerText.querySelector('.cursor')?.remove();
+    greetingText.querySelector('.cursor')?.remove();
+    thinkingDots.classList.remove('visible');
     robot.classList.remove('thinking');
   }
 
@@ -114,18 +136,34 @@ function initApp() {
 
       case 'embedding': {
         const topChunks = findTopChunks(payload.embedding);
-        startAnswer();
-        worker.postMessage({ type: 'generate', payload: { query: payload.query, chunks: topChunks } });
+        currentPersona = getPersona();
+        startAnswer(currentPersona);
+        worker.postMessage({ type: 'generate', payload: { query: payload.query, chunks: topChunks, persona: currentPersona } });
+        break;
+      }
+
+      case 'greeting': {
+        if (!greetingText.querySelector('.cursor')) {
+          greetingText.innerHTML = '<span class="cursor"></span>';
+        }
+        greetingText.querySelector('.cursor').insertAdjacentText('beforebegin', payload.text);
+        break;
+      }
+
+      case 'thinking': {
+        greetingText.querySelector('.cursor')?.remove();
+        thinkingDots.classList.add('visible');
+        answerLabel.textContent = `Thinking as ${currentPersona}…`;
         break;
       }
 
       case 'token': {
-        const cursor = answerText.querySelector('.cursor');
-        if (cursor) {
-          cursor.insertAdjacentText('beforebegin', payload.text);
-        } else {
-          answerText.textContent += payload.text;
+        if (!answerText.querySelector('.cursor')) {
+          thinkingDots.classList.remove('visible');
+          answerLabel.textContent = `Answer · as ${currentPersona}`;
+          answerText.innerHTML = '<span class="cursor"></span>';
         }
+        answerText.querySelector('.cursor').insertAdjacentText('beforebegin', payload.text);
         break;
       }
 

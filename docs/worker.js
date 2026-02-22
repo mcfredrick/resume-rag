@@ -43,10 +43,10 @@ async function getEmbedding(text) {
   return Array.from(output.data);
 }
 
-async function generateAnswer(query, chunks) {
+async function generateAnswer(query, chunks, persona = 'helpful assistant') {
   const context = chunks.map((c, i) => `[${i + 1}] ${c}`).join('\n\n');
 
-  const messages = [
+  const factMessages = [
     {
       role: 'system',
       content:
@@ -67,11 +67,34 @@ async function generateAnswer(query, chunks) {
     },
   });
 
-  await generator(messages, {
-    max_new_tokens: 300,
-    do_sample: false,
-    streamer,
-  });
+  if (persona === 'helpful assistant') {
+    await generator(factMessages, { max_new_tokens: 300, do_sample: false, streamer });
+  } else {
+    const greetingStreamer = new TextStreamer(generator.tokenizer, {
+      skip_prompt: true,
+      skip_special_tokens: true,
+      callback_function: (text) => {
+        self.postMessage({ type: 'greeting', payload: { text } });
+      },
+    });
+
+    await generator(
+      [{ role: 'system', content: `You are a ${persona}. Write a single short in-character greeting sentence.` },
+       { role: 'user', content: 'Say hello briefly.' }],
+      { max_new_tokens: 50, do_sample: false, streamer: greetingStreamer }
+    );
+
+    self.postMessage({ type: 'thinking' });
+
+    const firstPass = await generator(factMessages, { max_new_tokens: 300, do_sample: false });
+    const rawAnswer = firstPass[0].generated_text.at(-1).content;
+
+    await generator(
+      [{ role: 'system', content: `You are a ${persona}.` },
+       { role: 'user', content: `Rewrite the FACT in-character. FACT: ${rawAnswer}` }],
+      { max_new_tokens: 300, do_sample: false, streamer }
+    );
+  }
 
   self.postMessage({ type: 'done' });
 }
@@ -89,7 +112,7 @@ self.onmessage = async (e) => {
         break;
       }
       case 'generate':
-        await generateAnswer(payload.query, payload.chunks);
+        await generateAnswer(payload.query, payload.chunks, payload.persona);
         break;
     }
   } catch (err) {
