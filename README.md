@@ -1,17 +1,46 @@
 # resume-rag
 
-Client-side RAG agent for Matthew Fredrick's resume. Runs entirely in the browser — no server required.
+Client-side RAG agent for Matthew Fredrick's resume. Runs entirely in the browser — no server, no API keys, no data leaves your machine.
 
 **Live site:** https://mcfredrick.github.io/resume-rag/
 
 ## How it works
 
-1. The resume is split into chunks and embedded offline with `all-MiniLM-L6-v2`
-2. Those embeddings are shipped as `docs/embeddings.json`
-3. At query time, the browser embeds the question with the same model, finds the top-5 most relevant chunks via cosine similarity, and feeds them to SmolLM2-360M-Instruct for a grounded answer
-4. Both models run via [Transformers.js](https://huggingface.co/docs/transformers.js) — WebGPU if available, WASM fallback
+This is a minimal, dependency-free RAG (Retrieval-Augmented Generation) pipeline built on [Transformers.js](https://huggingface.co/docs/transformers.js), which runs ML models directly in the browser via WebAssembly and WebGPU.
 
-**First load:** ~25MB (embeddings model) + ~200MB (SmolLM2 q4) — cached in browser after that.
+### Architecture
+
+```
+docs/context.md          ← curated Q&A pairs (source of truth)
+      │
+      ▼ npm run generate-embeddings
+docs/embeddings.json     ← pre-computed vectors shipped with the site
+      │
+      ▼ (at query time, in a Web Worker)
+[1] Embed query          ← all-MiniLM-L6-v2 (384-dim, ~25MB)
+[2] Cosine similarity    ← rank all chunks, filter score < 0.3, keep top 4
+[3] Build prompt         ← system prompt + retrieved chunks as context
+[4] Generate answer      ← SmolLM2-360M-Instruct (~200MB, q4/q4f16)
+```
+
+**Models:**
+- **Embedding:** `Xenova/all-MiniLM-L6-v2` — used both offline (embedding generation) and at query time (query embedding)
+- **LLM:** `HuggingFaceTB/SmolLM2-360M-Instruct` — runs in a Web Worker; uses WebGPU (`q4f16`) if available, falls back to WASM (`q4`)
+
+**Knowledge base:** `docs/context.md` contains hand-curated Q&A pairs covering career history, skills, and achievements. Each blank-line-separated block becomes one chunk. This replaces raw resume chunking — curated Q&A pairs embed more precisely and give the tiny LLM cleaner context.
+
+**First load:** ~25MB (embedding model) + ~200MB (LLM weights) — both cached in the browser after that.
+
+### Key files
+
+| File | Purpose |
+|------|---------|
+| `docs/context.md` | Source Q&A pairs — edit this to update content |
+| `docs/embeddings.json` | Pre-computed embeddings — regenerate after editing context.md |
+| `docs/worker.js` | Web Worker: loads models, embeds queries, runs generation |
+| `docs/main.js` | Main thread: cosine similarity retrieval, UI state |
+| `docs/index.html` | Single-page UI |
+| `scripts/generate-embeddings.mjs` | Offline script to re-embed context.md |
 
 ## Local development
 
@@ -19,17 +48,23 @@ Client-side RAG agent for Matthew Fredrick's resume. Runs entirely in the browse
 npm run dev
 ```
 
-Opens `http://localhost:8080` and auto-reloads on file save. No build step — edits to `docs/worker.js`, `docs/main.js`, or `docs/index.html` take effect on the next browser refresh (or automatically with live-server).
+Opens `http://localhost:8080` with live reload. No build step — edits to `docs/worker.js`, `docs/main.js`, or `docs/index.html` take effect on the next browser refresh.
 
-> Note: on first load the browser still downloads ~225MB of model weights from HuggingFace. They're cached after that.
+> Note: the browser downloads ~225MB of model weights from HuggingFace on first load. They're cached after that.
 
-## Regenerating embeddings
+## Updating content
 
-If `docs/context.md` changes, re-run:
+Edit `docs/context.md`, then regenerate embeddings:
 
 ```bash
 npm install
 npm run generate-embeddings
 ```
 
-Then commit the updated `docs/embeddings.json`.
+Commit both `docs/context.md` and the updated `docs/embeddings.json`.
+
+## Deployment
+
+The site is served directly from the `docs/` directory via GitHub Pages. Push to `main` and it's live.
+
+The `coi-serviceworker.min.js` in `docs/` sets the `Cross-Origin-Isolation` headers required for SharedArrayBuffer (needed by the WASM/WebGPU runtimes) without requiring server configuration.
