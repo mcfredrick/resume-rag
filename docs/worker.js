@@ -90,8 +90,8 @@ async function generateAnswer(query, chunks, persona = 'helpful assistant') {
     const rawAnswer = firstPass[0].generated_text.at(-1).content;
 
     await generator(
-      [{ role: 'system', content: `You are a ${persona}.` },
-       { role: 'user', content: `Rewrite the FACT in-character. FACT: ${rawAnswer}` }],
+      [{ role: 'system', content: `You are a ${persona}. Answer the question in character as a ${persona}, using only the provided facts.` },
+       { role: 'user', content: `Facts: ${rawAnswer}\n\nQuestion: ${query}` }],
       { max_new_tokens: 300, do_sample: false, streamer }
     );
   }
