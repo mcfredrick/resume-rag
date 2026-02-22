@@ -77,6 +77,8 @@ function initApp() {
     });
   }
 
+  const robot = document.getElementById('robot');
+
   function startAnswer() {
     isGenerating = true;
     submitBtn.disabled = true;
@@ -84,6 +86,7 @@ function initApp() {
     questionInput.disabled = true;
     answerCard.classList.add('visible');
     answerText.innerHTML = '<span class="cursor"></span>';
+    robot.classList.add('thinking');
   }
 
   function finishAnswer() {
@@ -93,6 +96,7 @@ function initApp() {
     questionInput.disabled = false;
     const cursor = answerText.querySelector('.cursor');
     if (cursor) cursor.remove();
+    robot.classList.remove('thinking');
   }
 
   worker.onmessage = async ({ data: { type, payload } }) => {

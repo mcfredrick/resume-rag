@@ -226,16 +226,100 @@
       text-align: center;
     }
     footer a { color: var(--muted); text-decoration: underline; }
+
+    /* ── Robot sprite ── */
+    .header-inner {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    @keyframes robot-idle {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-4px); }
+    }
+    @keyframes robot-antenna {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.25; }
+    }
+    @keyframes robot-eye-blink {
+      0%, 86%, 96%, 100% { transform: scaleY(1); }
+      91% { transform: scaleY(0.07); }
+    }
+    @keyframes robot-belly-rgb {
+      0%   { fill: #ff3333; }
+      16%  { fill: #ff9900; }
+      33%  { fill: #eeee00; }
+      50%  { fill: #33ee66; }
+      66%  { fill: #3399ff; }
+      83%  { fill: #cc33ff; }
+      100% { fill: #ff3333; }
+    }
+
+    .robot {
+      flex-shrink: 0;
+      animation: robot-idle 3.2s ease-in-out infinite;
+    }
+    .robot-antenna {
+      animation: robot-antenna 1.6s ease-in-out infinite;
+    }
+    .robot-eye {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: robot-eye-blink 4.5s ease-in-out infinite;
+    }
+    .robot-eye-right { animation-delay: 0.09s; }
+    .robot-belly { fill: var(--accent); }
+    .robot.thinking .robot-belly {
+      animation: robot-belly-rgb 1.6s linear infinite;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>Resume Q&amp;A</h1>
-      <p class="subtitle">
-        Ask anything about <a href="https://mcfredrick.github.io" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;">Matthew Fredrick</a>'s experience.<br>
-        Runs entirely in your browser — no data leaves your machine.
-      </p>
+      <div class="header-inner">
+        <svg class="robot" id="robot" viewBox="0 0 60 90" width="60" height="90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <!-- Antenna stem -->
+          <line x1="30" y1="7" x2="30" y2="16" stroke="#3d4163" stroke-width="2" stroke-linecap="round"/>
+          <!-- Antenna light -->
+          <circle cx="30" cy="5" r="4.5" fill="#6366f1" class="robot-antenna"/>
+          <!-- Head -->
+          <rect x="10" y="15" width="40" height="26" rx="6" fill="#1a1d27" stroke="#3d4163" stroke-width="1.5"/>
+          <!-- Eye sockets -->
+          <circle cx="22" cy="27" r="5" fill="#0a0c14"/>
+          <circle cx="38" cy="27" r="5" fill="#0a0c14"/>
+          <!-- Eyes -->
+          <circle cx="22" cy="27" r="3" fill="#22d3ee" class="robot-eye robot-eye-left"/>
+          <circle cx="38" cy="27" r="3" fill="#22d3ee" class="robot-eye robot-eye-right"/>
+          <!-- Speaker grille mouth -->
+          <rect x="19" y="35" width="5" height="2" rx="1" fill="#3d4163"/>
+          <rect x="27" y="35" width="6" height="2" rx="1" fill="#3d4163"/>
+          <rect x="36" y="35" width="5" height="2" rx="1" fill="#3d4163"/>
+          <!-- Body -->
+          <rect x="7" y="45" width="46" height="32" rx="8" fill="#1a1d27" stroke="#3d4163" stroke-width="1.5"/>
+          <!-- Belly panel -->
+          <rect x="17" y="52" width="26" height="17" rx="3" class="robot-belly"/>
+          <!-- Side rivets -->
+          <circle cx="12" cy="55" r="2" fill="#3d4163"/>
+          <circle cx="48" cy="55" r="2" fill="#3d4163"/>
+          <circle cx="12" cy="67" r="2" fill="#3d4163"/>
+          <circle cx="48" cy="67" r="2" fill="#3d4163"/>
+          <!-- Arms -->
+          <rect x="0" y="47" width="9" height="18" rx="4.5" fill="#1a1d27" stroke="#3d4163" stroke-width="1.5"/>
+          <rect x="51" y="47" width="9" height="18" rx="4.5" fill="#1a1d27" stroke="#3d4163" stroke-width="1.5"/>
+          <!-- Legs -->
+          <rect x="14" y="77" width="12" height="12" rx="4" fill="#1a1d27" stroke="#3d4163" stroke-width="1.5"/>
+          <rect x="34" y="77" width="12" height="12" rx="4" fill="#1a1d27" stroke="#3d4163" stroke-width="1.5"/>
+        </svg>
+        <div>
+          <h1>Resume Q&amp;A</h1>
+          <p class="subtitle">
+            Ask anything about <a href="https://mcfredrick.github.io" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;">Matthew Fredrick</a>'s experience.<br>
+            Runs entirely in your browser — no data leaves your machine.
+          </p>
+        </div>
+      </div>
     </header>
 
     <div class="status-card" id="status-card">
