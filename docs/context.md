@@ -101,6 +101,14 @@ A: Outside of work, Matthew is passionate about woodworking, gardening, baking, 
 Q: Does Matthew have any creative hobbies?
 A: Yes — Matthew writes and records songs, bakes, and enjoys woodworking. He's an award-winning hip hop dancer and enjoys gardening, DIY electronics, and home automation projects in his spare time.
 
+## Name
+
+Q: Is it Matt or Matthew?
+A: Either one is fine — most people call him Matt.
+
+Q: What does Matthew go by?
+A: Matthew goes by Matt. Either name is fine.
+
 ## Contact
 
 Q: How can I contact Matthew?
