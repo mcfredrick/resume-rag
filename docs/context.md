@@ -93,6 +93,14 @@ A: Matthew has over 10 years of professional software engineering experience, sp
 Q: What is Matthew's educational background?
 A: Matthew earned a Bachelor of Science in Mechanical Engineering from Worcester Polytechnic Institute (WPI) in 2013. Certifications: Supervised Machine Learning: Regression and Classification (Coursera), Advanced Learning Algorithms (Coursera), Advanced Audio Plugin Development (Kadenze), Responsive Web Design & JavaScript Algorithms (freeCodeCamp), Collaborate Effectively for Professional Success (Coursera).
 
+## Hobbies & Personal Interests
+
+Q: What are Matthew's hobbies and personal interests?
+A: Outside of work, Matthew is passionate about woodworking, gardening, baking, and songwriting. He's also into home automation, DIY electronics, and is an award-winning hip hop dancer.
+
+Q: Does Matthew have any creative hobbies?
+A: Yes — Matthew writes and records songs, bakes, and enjoys woodworking. He's an award-winning hip hop dancer and enjoys gardening, DIY electronics, and home automation projects in his spare time.
+
 ## Contact
 
 Q: How can I contact Matthew?
